@@ -35,7 +35,7 @@ const AccountProvider = ({ children }) => {
 
   const [errorMessage, setErrorMessage]=useState('')
 
-  const [dataSelectedNewPayment, setDataSelectedNewPayment] = useState(300)
+  const [dataSelectedNewPayment, setDataSelectedNewPayment] = useState(0)
 
   useEffect(()=>{
     try {
