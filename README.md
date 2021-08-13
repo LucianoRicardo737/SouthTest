@@ -1,3 +1,3 @@
 <p align="center">
-  <img src="./img/look.png" >
+  <img src="./public/img/look.png" >
 </p>
