@@ -1,0 +1,6 @@
+.point{
+    cursor: pointer;
+}
+.addBorder{
+    border: '2px solid black !important'
+}
