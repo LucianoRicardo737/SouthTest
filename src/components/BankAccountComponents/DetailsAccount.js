@@ -63,7 +63,7 @@ const DetailsAccount = () => {
 
   return (
     <div style={detailsAccountStyle.cont} className='ui doubling stackable left '>
-      <h3>Account Information {isAssigned(accountNumber) && <i className="dollar sign icon"></i>}</h3>
+      <h3>Account Information {isAssigned(accountNumber)!==false ? <i className="dollar sign icon"></i> : null }</h3>
       <div className='ui mini form'>
         <div className="three fields">
           {returnBankName}
