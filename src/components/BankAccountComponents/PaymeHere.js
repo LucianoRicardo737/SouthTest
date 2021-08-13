@@ -32,7 +32,7 @@ const PaymeHere = () => {
           <div className="field">
             <input
               onChange={handlerSelectedPaymentAccount}
-              defaultValue='300'
+              defaultValue='0'
               min='300'
               max={salaryNotAssigned()} 
               type='number' 
