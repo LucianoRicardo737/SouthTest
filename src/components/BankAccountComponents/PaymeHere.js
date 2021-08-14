@@ -11,16 +11,9 @@ const PaymeHere = () => {
     handlerSelectedPaymentAccount
   }=useAccountContext()
 
-  const paymeHereStyle = {
-    cont:{
-      border: '1px solid rgb(237,237,238)',
-      padding: '20px',
-      borderRadius: '5px'
-    }
-  }
 
   return (
-    <div style={paymeHereStyle.cont} className='ui doubling stackable left transition animating in fade down '>
+    <div className='ui doubling stackable left '>
       <div className="ui mini form ">
         <div className="three fields">
           <div className="field">

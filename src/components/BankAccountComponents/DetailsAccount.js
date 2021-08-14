@@ -19,11 +19,11 @@ const DetailsAccount = () => {
   } = dataFormForNewAccount
 
   const detailsAccountStyle = {
-    cont:{
-      border: '1px solid rgb(237,237,238)',
-      padding: '20px',
-      borderRadius: '5px'
-    },
+    // cont:{
+    //   border: '1px solid rgb(237,237,238)',
+    //   padding: '20px',
+    //   borderRadius: '5px'
+    // },
     labelSpan:{
       fontWeight: 'bold',
       marginRight: '4px'
@@ -32,8 +32,8 @@ const DetailsAccount = () => {
 
   const useField = ({label,data}) => {
     return (
-      <div className='field '>
-        <p className=''><span style={detailsAccountStyle.labelSpan}>{label}</span><span>{data}</span></p>
+      <div className='field'>
+        <p className='' style={{wordWrap:'break-word'}}><span style={detailsAccountStyle.labelSpan}>{label}</span><span>{data}</span></p>
       </div>
     )
   }
@@ -62,7 +62,7 @@ const DetailsAccount = () => {
 
 
   return (
-    <div id='test' style={detailsAccountStyle.cont} className='ui doubling stackable left transition animating in fade up'>
+    <div className='ui doubling stackable left '>
       <h3>Account Information {!isThisAccountSelectToPay(accountNumber) && <i className="dollar sign icon"></i> }</h3>
       <div className='ui mini form'>
         <div className="three fields">

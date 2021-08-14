@@ -24,7 +24,7 @@ const AccountProvider = ({ children }) => {
   const [viewDetailAccount, setViewDetailAccount] = useState(false)
   const [viewPaymeHere, setViewPaymeHere] = useState(false)
   // account number
-  const [accountNumberState,setAccountSelectState]=useState('')
+  const [accountNumberState,setAccountNumberState]=useState('')
   // const [paymeHereAccountNumber,setPaymeHereAccountNumber]=useState('')
   // for new account and view details
   const [dataFormForNewAccount, setDataFormForNewAccount] = useState(initialDataAccoutn)
@@ -78,11 +78,12 @@ const AccountProvider = ({ children }) => {
 
     switch (value) {
     case VIEW_ACCOUNT_COMPONET:
+      setAccountNumberState(e.target.id)
       setDataFormForNewAccount(filterAccoutByAccountNumber(e.target.id))
       setViewDetailAccount(true)
       break
     case VIEW_PAYMENT_HERE_COMPONET:
-      setAccountSelectState(e.target.id)
+      setAccountNumberState(e.target.id)
       setViewPaymeHere(true)
       break
     case VIEW_NEW_ACCOUNT_COMPONET:
@@ -185,7 +186,8 @@ const AccountProvider = ({ children }) => {
         unselectPaymentAccount,
         accountalreadyDeclared,
         changeViewComponetns,
-        maxTwoAccountSelectedForPayConditional
+        maxTwoAccountSelectedForPayConditional,
+        accountNumberState
       }}
     > 
       {children}

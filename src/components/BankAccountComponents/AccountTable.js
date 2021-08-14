@@ -2,10 +2,16 @@ import { useAppContext } from '../../context/AppProvider'
 import React from 'react'
 import { useAccountContext } from '../../context/AccountProvider'
 import {localSet, getInLocalTheLocalAccounts} from '../../context/functions/localStorage'
+import DetailsAccount from './DetailsAccount'
+import PaymeHere from './PaymeHere'
 const AccountTable = () => {
   const localStyle = {
     account: {
-      cursor: 'pointer'
+      cursor: 'pointer',
+      color: '#0e76a8'
+    },
+    border:{
+      border: '1px solid black'
     }
   }
   const { 
@@ -17,7 +23,10 @@ const AccountTable = () => {
     typeAccountSelected,
     isThisAccountSelectToPay, 
     maxTwoAccountSelectedForPayConditional, 
-    unselectPaymentAccount 
+    unselectPaymentAccount,
+    viewDetailAccount,
+    viewPaymeHere,
+    accountNumberState
   } = useAccountContext()
 
   const deleteThisAccount = (e) => {
@@ -29,7 +38,7 @@ const AccountTable = () => {
   }
   return (
     <div>
-      <table className='ui small table selectable center aligned '>
+      <table className='ui small tree column table selectable '>
         <thead>
           <tr>
             <th>Bank</th>
@@ -37,14 +46,14 @@ const AccountTable = () => {
             <th>Acctions</th>
           </tr>
         </thead>
-        <tbody>
-          {
-            accountsData?.filter(res=>{return res.type === typeAccountSelected}).map(res => {
-              return (
-                <tr key={res.accountNumber}>
+        {
+          accountsData?.filter(res=>{return res.type === typeAccountSelected}).map(res => {
+            return ( 
+              <tbody key={res.accountNumber}>
+                <tr >
                   <td 
-                    data-tooltip="View Details" 
-                    data-position="right center" 
+                    // data-tooltip="View Details" 
+                    // data-position="right center" 
                     className='hover' 
                     style={localStyle.account} 
                     id={res.accountNumber} onClick={(e) => { changeViewComponetns('viewDetailsForThisAccountComponent', e) }}>{res.bankName}</td>
@@ -53,8 +62,8 @@ const AccountTable = () => {
                     <div className="content">
                       {isThisAccountSelectToPay(res.accountNumber) ?
                         <button  
-                          onClick={(e)=>changeViewComponetns( 'viewPaymentHereComponent',e)} 
                           id={res.accountNumber} 
+                          onClick={(e)=>changeViewComponetns( 'viewPaymentHereComponent',e)} 
                           className={maxTwoAccountSelectedForPayConditional() === true ? 'ui mini left attached linkedin button' : 'ui mini left attached linkedin button disabled'}>{maxTwoAccountSelectedForPayConditional() === true ? 'Payment Here': 'All Selected'}
                         </button>
                         :
@@ -74,11 +83,21 @@ const AccountTable = () => {
                     </div>
                   </td>
                 </tr>
-
-              )
-            })
-          }
-        </tbody>
+                {viewDetailAccount && 
+                 accountNumberState === res.accountNumber ? 
+                  <tr>
+                    <td colSpan="3" className='transition animating in fade down'><DetailsAccount /></td>
+                  </tr> : null 
+                }
+                {viewPaymeHere &&
+                 accountNumberState === res.accountNumber ? 
+                  <tr>
+                    <td colSpan="3" className='transition animating in fade down'><PaymeHere /></td>
+                  </tr> : null }
+              </tbody>
+            )
+          })
+        }
       </table>
     </div>
   )

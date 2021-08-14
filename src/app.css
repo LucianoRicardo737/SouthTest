@@ -2,8 +2,5 @@
     cursor: pointer;
 }
 .addBorder{
-    border: '2px solid black !important';
-    justify-content: center;
-    justify-items: center;
-    align-items: center;
+    border: '2px solid black ';
 }

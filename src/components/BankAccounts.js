@@ -1,17 +1,13 @@
 import React from 'react'
 import { useAccountContext } from '../context/AccountProvider'
 import AddNewAccount from './BankAccountComponents/AddNewAccount'
-import DetailsAccount from './BankAccountComponents/DetailsAccount' 
 import AccountTable from './BankAccountComponents/AccountTable'
-import PaymeHere from './BankAccountComponents/PaymeHere'
 
 const BankAccounts = () => {
 
   let {
     viewNewAccountOrDetailAccount, 
-    viewDetailAccount, 
     changeViewComponetns, 
-    viewPaymeHere,
     errorMessage,
     setErrorMessage
   } = useAccountContext()
@@ -52,9 +48,7 @@ const BankAccounts = () => {
                 {errorMessage}
               </div>
             </div>}
-          {viewPaymeHere &&<PaymeHere />}
           {viewNewAccountOrDetailAccount && <AddNewAccount />}
-          {viewDetailAccount &&<DetailsAccount/>}
         </div>
         <div>
           <AccountTable />
