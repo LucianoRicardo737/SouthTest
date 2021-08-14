@@ -1,4 +1,5 @@
 import React, {useContext, useState, useEffect} from 'react'
+import { VIEW_ACCOUNT_COMPONET, VIEW_NEW_ACCOUNT_COMPONET, VIEW_PAYMENT_HERE_COMPONET, VIEW_SELEC_TYPE_ACCOUNT_COMPONET } from './actions/actionTypes'
 import { useAppContext } from './AppProvider'
 import { internationalString, localString, tagUserData } from './env/determinants'
 import { localSet } from './functions/localStorage'
@@ -10,33 +11,29 @@ const useAccountContext = () => {
 
 const AccountProvider = ({ children }) => {
 
-  let {userData, accountsData, setUserData} = useAppContext()
-  const [typeAccountSelected, setTypeAccountSelected] = useState(localString)
+  let {
+    userData, 
+    accountsData, 
+    setUserData
+  } = useAppContext()
 
-  const initialDataAccoutn = {
-    beneficiary: `${userData.name} ${userData.lastname}`,
-    beneficiaryAddress:'',
-    accountNumber:0,
-    bankName:'',
-    bankAddress:'',
-    typeCoin:'',
-    swiftNumber:'',
-    type:typeAccountSelected
-  }
-  
+  //  local or international
+  const [typeAccountSelected, setTypeAccountSelected] = useState(localString)
+  // switch views
   const [viewNewAccountOrDetailAccount, setViewNewAccountOrDetailAccount] = useState(false)
   const [viewDetailAccount, setViewDetailAccount] = useState(false)
   const [viewPaymeHere, setViewPaymeHere] = useState(false)
-
-  const [paymeHereAccountNumber,setPaymeHereAccountNumber]=useState('')
-  const [dataAccount, setDataAccount] = useState (initialDataAccoutn) 
-
+  // account number
+  const [accountNumberState,setAccountSelectState]=useState('')
+  // const [paymeHereAccountNumber,setPaymeHereAccountNumber]=useState('')
+  // for new account and view details
   const [dataFormForNewAccount, setDataFormForNewAccount] = useState(initialDataAccoutn)
-
+  // view erros
   const [errorMessage, setErrorMessage]=useState('')
-
+  // select mount to pay in one account
   const [dataSelectedNewPayment, setDataSelectedNewPayment] = useState(0)
 
+  // this effect is necessary to maintain actualize initial account when the type cambia 
   useEffect(()=>{
     try {
       setDataFormForNewAccount(initialDataAccoutn)
@@ -45,77 +42,86 @@ const AccountProvider = ({ children }) => {
     }
   },[typeAccountSelected])
 
-  function closeAllViews(){
+  function initialDataAccoutn () {
+    let data = {
+      beneficiary: `${userData.name} ${userData.lastname}`,
+      beneficiaryAddress:'',
+      accountNumber:0,
+      bankName:'',
+      bankAddress:'',
+      typeCoin:'',
+      swiftNumber:'',
+      type:typeAccountSelected
+    }
+    return data
+  }
+  
+  // close all components
+  function closeAllComponents(){
     setViewNewAccountOrDetailAccount(false)
     setViewPaymeHere(false)
     setViewDetailAccount(false)
     setErrorMessage('')
-    setDataFormForNewAccount(initialDataAccoutn)
   }
-
-
-  function seeDetailsForThisAccount (e) {
+  function filterAccoutByAccountNumber(value){
     const accData = accountsData?.filter(res => { 
-      return res.accountNumber === e.target.id 
+      return res.accountNumber === value 
     })
-    setDataAccount(accData[0])
-    closeAllViews()
-    setViewDetailAccount(true)
+    return accData[0]
   }
-
-  function seePaymetHere(e){
-    closeAllViews()
-    setViewPaymeHere(true)
-    setPaymeHereAccountNumber(e.target.id)
-    setErrorMessage('')
-  }
-  
-  function viewNewAccountComponetn (){
-    closeAllViews()
-    setViewNewAccountOrDetailAccount(true)
-  }
-
-  function changeTypeAccount(action) {
+  // switch views between components 
+  function changeViewComponetns(value, e){
 
     const localSelector = document.querySelector('.local')
     const internationalSelector = document.querySelector('.international')
-    closeAllViews()
-    
-    if(action === localString){
-      setTypeAccountSelected(localString)
-      internationalSelector.classList.remove('active')
-      localSelector.classList.add('active')
-    } else {
-      setTypeAccountSelected(internationalString)
-      localSelector.classList.remove('active')
-      internationalSelector.classList.add('active')
+    closeAllComponents()
+
+    switch (value) {
+    case VIEW_ACCOUNT_COMPONET:
+      setDataFormForNewAccount(filterAccoutByAccountNumber(e.target.id))
+      setViewDetailAccount(true)
+      break
+    case VIEW_PAYMENT_HERE_COMPONET:
+      setAccountSelectState(e.target.id)
+      setViewPaymeHere(true)
+      break
+    case VIEW_NEW_ACCOUNT_COMPONET:
+      setViewNewAccountOrDetailAccount(true)
+      break
+    case VIEW_SELEC_TYPE_ACCOUNT_COMPONET:
+      if(e === localString){
+        setTypeAccountSelected(localString)
+        internationalSelector.classList.remove('active')
+        localSelector.classList.add('active')
+      } else {
+        setTypeAccountSelected(internationalString)
+        localSelector.classList.remove('active')
+        internationalSelector.classList.add('active')
+      }
+      break
+    default: return closeAllComponents()
     }
   }
-
+  // not assigned salary to account
   function salaryNotAssigned(){
-    let maxSalaryToAssigned = userData.depositAccounts?.reduce((total, num)=>{return total - num.pay
+    return userData.depositAccounts?.reduce((total, num)=>{
+      return total - num.pay
     }, userData.monthlySalary)
-    if(salaryAssignedToThisCount()){
-      maxSalaryToAssigned + salaryAssignedToThisCount()
-    }
-    return maxSalaryToAssigned.toString()
   }
-
-  function salaryAssignedToThisCount(){
-    const totalyAssignedToThisAccount = userData.depositAccounts?.filter(res=>{
-      return res.accountNumber === paymeHereAccountNumber
-    }).map(res=>{return res.pay})
-    return totalyAssignedToThisAccount[0]
+  // limit selected accounts 
+  function maxTwoAccountSelectedForPayConditional(){
+    if(salaryNotAssigned()===0) {return false} 
+    else if(userData.depositAccounts.length < 2) return true 
   }
-  
-  function isAssigned(value){
+  // conditional
+  function isThisAccountSelectToPay(value){
     const totalyAssignedToThisAccount = userData.depositAccounts?.filter(res=>{
       return res.accountNumber === value
     }).map(res=>{return res.pay})
-    if(!totalyAssignedToThisAccount[0]) return false
-    
+    if(totalyAssignedToThisAccount[0]) return false
+    else return true
   }
-
+  // conditional
   function accountalreadyDeclared(value){
     const totalyAssignedToThisAccount = accountsData?.filter(res=>{
       return res.accountNumber === value
@@ -123,18 +129,9 @@ const AccountProvider = ({ children }) => {
     return totalyAssignedToThisAccount.length
   }
 
-  function allAsigned(){
-    if(salaryNotAssigned()[0]==='0'){ return true
-    }else{ return false}
-  }
 
-  function maxTwoSelected(){
-    if(allAsigned()===true) {return false} 
-    else if(userData.depositAccounts.length < 2) return true 
-  }
-
-  function unselectPayment(e){
-    let data = userData.depositAccounts.filter(res=>{
+  function unselectPaymentAccount(e){
+    let data = userData.depositAccounts?.filter(res=>{
       return res.accountNumber !== e.target.id
     })
     let newUserData = {...userData, depositAccounts:data}
@@ -142,66 +139,54 @@ const AccountProvider = ({ children }) => {
     localSet(tagUserData, newUserData)
   }
 
-
   const handlerSelectedPaymentAccount = (e) => {
     setDataSelectedNewPayment(e.target.value)
   }
 
   function sumbitSelectNewPaymentAccount(){
     const initialSelectedNewPaymentValue = {
-      accountNumber: paymeHereAccountNumber,
+      accountNumber: accountNumberState,
       typeAccount: typeAccountSelected,
       pay: dataSelectedNewPayment
     }
     let { pay } = initialSelectedNewPaymentValue
-    
-    if( parseInt(pay) < 299 ) return setErrorMessage('The minimum to assign is 300.')
-    if( parseInt(pay) >  parseInt(salaryNotAssigned())) return setErrorMessage('You cannot assign more than the total.')
+    if(pay < 299 ) return setErrorMessage('The minimum to assign is 300.')
+    if( pay > parseInt(salaryNotAssigned())) return setErrorMessage('You cannot assign more than the total.')
     if(userData.depositAccounts.length === 1){
-      if( parseInt(pay) !== parseInt(salaryNotAssigned())){
+      if( pay !== parseInt(salaryNotAssigned())){
         return setErrorMessage('It is necessary to allocate the remaining total .') }
     } 
-
-    if(!maxTwoSelected())return null
+    if(!maxTwoAccountSelectedForPayConditional())return null
     let newUserData = {...userData, depositAccounts:[...userData.depositAccounts, initialSelectedNewPaymentValue]}
     setUserData(newUserData)
     localSet(tagUserData, newUserData)
     setViewPaymeHere(false)
   }
 
-
   return (
     <AccountContext.Provider
       value={{
-        seeDetailsForThisAccount,
-        dataAccount,
-        setDataAccount,
         viewNewAccountOrDetailAccount,
-        changeTypeAccount,
         viewDetailAccount, 
-        viewNewAccountComponetn,
         viewPaymeHere,
         errorMessage, 
         setErrorMessage,
         salaryNotAssigned,
-        closeAllViews,
+        closeAllComponents,
         sumbitSelectNewPaymentAccount,
         handlerSelectedPaymentAccount,
-        isAssigned,
+        isThisAccountSelectToPay,
         typeAccountSelected, 
         dataFormForNewAccount,
         setDataFormForNewAccount,
-        seePaymetHere,
-        maxTwoSelected,
-        unselectPayment,
-
-        accountalreadyDeclared
-        
+        unselectPaymentAccount,
+        accountalreadyDeclared,
+        changeViewComponetns,
+        maxTwoAccountSelectedForPayConditional
       }}
     > 
       {children}
     </AccountContext.Provider>
   )
 }
-
 export { AccountProvider, useAccountContext }

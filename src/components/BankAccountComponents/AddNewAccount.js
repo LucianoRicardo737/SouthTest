@@ -13,7 +13,7 @@ const AddNewAccount = () => {
     dataFormForNewAccount, 
     setDataFormForNewAccount,
     setErrorMessage,
-    closeAllViews,
+    closeAllComponents,
     accountalreadyDeclared
   } = useAccountContext()
 
@@ -22,6 +22,13 @@ const AddNewAccount = () => {
       border: '1px solid rgb(237,237,238)',
       padding: '20px',
       borderRadius: '5px'
+    },
+    buttonGroup:{
+      marginRight: '0px',
+      justifyContent: 'right !important',
+      justifyItems: 'center !important',
+      alignItems: 'right !important',
+      margin: 'auto'
     }
   }
   
@@ -115,7 +122,7 @@ const AddNewAccount = () => {
   }
   
   return (
-    <div style={addAccountStyle.cont} className='ui doubling stackable'>
+    <div style={addAccountStyle.cont} className='ui doubling stackable  transition animating in fade down'>
       <form className="ui mini form" onSubmit={(e)=>submitNewAccountForm(e)}>
         <div className="three fields">
           {returnBankName }
@@ -129,8 +136,10 @@ const AddNewAccount = () => {
           }
           {returnPersonalAddress}
         </div>
+       
         <button type='submit' className="ui button">Submit</button>
-        <span onClick={()=>closeAllViews()} className="ui button">Close</span>
+        <span onClick={()=>closeAllComponents()} className="ui button">Close</span>
+       
       </form>
     </div>
   )

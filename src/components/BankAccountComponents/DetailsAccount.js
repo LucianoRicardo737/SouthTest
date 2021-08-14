@@ -2,9 +2,9 @@ import React from 'react'
 import { useAccountContext } from '../../context/AccountProvider'
 const DetailsAccount = () => { 
   const {
-    dataAccount, 
-    closeAllViews, 
-    isAssigned
+    dataFormForNewAccount, 
+    closeAllComponents, 
+    isThisAccountSelectToPay
   } = useAccountContext()
 
   const {
@@ -16,7 +16,7 @@ const DetailsAccount = () => {
     typeCoin,
     swiftNumber
     // type
-  } = dataAccount
+  } = dataFormForNewAccount
 
   const detailsAccountStyle = {
     cont:{
@@ -62,8 +62,8 @@ const DetailsAccount = () => {
 
 
   return (
-    <div style={detailsAccountStyle.cont} className='ui doubling stackable left '>
-      <h3>Account Information {isAssigned(accountNumber)!==false ? <i className="dollar sign icon"></i> : null }</h3>
+    <div id='test' style={detailsAccountStyle.cont} className='ui doubling stackable left transition animating in fade up'>
+      <h3>Account Information {!isThisAccountSelectToPay(accountNumber) && <i className="dollar sign icon"></i> }</h3>
       <div className='ui mini form'>
         <div className="three fields">
           {returnBankName}
@@ -82,7 +82,7 @@ const DetailsAccount = () => {
           </div>
         </div>
       </div>
-      <button onClick={()=>closeAllViews()} className="ui button">Close</button>
+      <button onClick={()=>closeAllComponents()} className="ui button">Close</button>
     </div>
   )
 }

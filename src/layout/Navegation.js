@@ -15,8 +15,8 @@ const Navegation = () => {
     }
   }
 
-  const logOut = () => {
-    alert(`Bye ${name}`) // eslint-disable-line
+  function logOut(){
+    alert(`Bye ${name}`)
   }
 
   return (

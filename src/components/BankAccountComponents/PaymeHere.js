@@ -6,7 +6,7 @@ const PaymeHere = () => {
   const {userData} = useAppContext()
   const {
     salaryNotAssigned,  
-    closeAllViews, 
+    closeAllComponents, 
     sumbitSelectNewPaymentAccount, 
     handlerSelectedPaymentAccount
   }=useAccountContext()
@@ -20,7 +20,7 @@ const PaymeHere = () => {
   }
 
   return (
-    <div style={paymeHereStyle.cont} className='ui doubling stackable left '>
+    <div style={paymeHereStyle.cont} className='ui doubling stackable left transition animating in fade down '>
       <div className="ui mini form ">
         <div className="three fields">
           <div className="field">
@@ -31,7 +31,7 @@ const PaymeHere = () => {
           </div>
           <div className="field">
             <input
-              onChange={handlerSelectedPaymentAccount}
+              onChange={(handlerSelectedPaymentAccount)}
               defaultValue='0'
               min='300'
               max={salaryNotAssigned()} 
@@ -42,7 +42,7 @@ const PaymeHere = () => {
       </div>
       <div className='container'>
         <button onClick={()=>sumbitSelectNewPaymentAccount()} className="ui right  button">Submit</button>
-        <button onClick={()=>closeAllViews()} className="ui right  button">Close</button>
+        <button onClick={()=>closeAllComponents()} className="ui right  button">Close</button>
       </div>
     </div>
   )

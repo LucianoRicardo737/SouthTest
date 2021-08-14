@@ -1,5 +1,4 @@
 import React, { useState, useContext } from 'react'
-import { initialUserData, initialAccountsData } from '../db/initialData_db'
 import { getInLocalTheLocalAccounts, getInLocalTheUserData } from './functions/localStorage'
 
 const AppContext = React.createContext()
@@ -16,11 +15,10 @@ const AppProvider = ({ children }) => {
   return (
     <AppContext.Provider
       value={{
-        initialUserData,
         userData,
         setUserData,
-        initialAccountsData,
-        accountsData, setAccountsData,
+        accountsData, 
+        setAccountsData,
       }}
     >
       {children}

@@ -13,24 +13,23 @@ const AccountTable = () => {
     setAccountsData 
   } = useAppContext()
   const {
-    seeDetailsForThisAccount, 
+    changeViewComponetns, 
     typeAccountSelected,
-    seePaymetHere, 
-    isAssigned, 
-    maxTwoSelected, 
-    unselectPayment 
+    isThisAccountSelectToPay, 
+    maxTwoAccountSelectedForPayConditional, 
+    unselectPaymentAccount 
   } = useAccountContext()
 
   const deleteThisAccount = (e) => {
     e.preventDefault()
-    unselectPayment(e)
+    unselectPaymentAccount(e)
     let newArrayWithoutDeletedAccount = accountsData?.filter(res=>{return res.accountNumber !== e.target.id})
     localSet('accountsData', newArrayWithoutDeletedAccount)
     setAccountsData(getInLocalTheLocalAccounts())
   }
   return (
     <div>
-      <table className='ui small table selectable center aligned'>
+      <table className='ui small table selectable center aligned '>
         <thead>
           <tr>
             <th>Bank</th>
@@ -48,19 +47,19 @@ const AccountTable = () => {
                     data-position="right center" 
                     className='hover' 
                     style={localStyle.account} 
-                    id={res.accountNumber} onClick={(e) => { seeDetailsForThisAccount(e) }}>{res.bankName}</td>
+                    id={res.accountNumber} onClick={(e) => { changeViewComponetns('viewDetailsForThisAccountComponent', e) }}>{res.bankName}</td>
                   <td>{res.accountNumber}</td>
                   <td>
                     <div className="content">
-                      {isAssigned(res.accountNumber) === false ?
+                      {isThisAccountSelectToPay(res.accountNumber) ?
                         <button  
-                          onClick={(e)=>seePaymetHere(e)} 
+                          onClick={(e)=>changeViewComponetns( 'viewPaymentHereComponent',e)} 
                           id={res.accountNumber} 
-                          className={maxTwoSelected() === true ? 'ui mini left attached linkedin button' : 'ui mini left attached linkedin button disabled'}>{maxTwoSelected() === true ? 'Payment Here': 'All Selected'}
+                          className={maxTwoAccountSelectedForPayConditional() === true ? 'ui mini left attached linkedin button' : 'ui mini left attached linkedin button disabled'}>{maxTwoAccountSelectedForPayConditional() === true ? 'Payment Here': 'All Selected'}
                         </button>
                         :
                         <button 
-                          onClick={(e)=>unselectPayment(e)} 
+                          onClick={(e)=>unselectPaymentAccount(e)} 
                           id={res.accountNumber} 
                           className='ui mini left attached  button'>
                           Unselect
