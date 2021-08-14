@@ -108,6 +108,7 @@ const AccountProvider = ({ children }) => {
       return total - num.pay
     }, userData.monthlySalary)
   }
+
   // limit selected accounts 
   function maxTwoAccountSelectedForPayConditional(){
     if(salaryNotAssigned()===0) {return false} 
@@ -149,14 +150,16 @@ const AccountProvider = ({ children }) => {
       typeAccount: typeAccountSelected,
       pay: dataSelectedNewPayment
     }
-    let { pay } = initialSelectedNewPaymentValue
+    const pay = parseInt(initialSelectedNewPaymentValue.pay)
     if(pay < 299 ) return setErrorMessage('The minimum to assign is 300.')
     if( pay > parseInt(salaryNotAssigned())) return setErrorMessage('You cannot assign more than the total.')
     if(userData.depositAccounts.length === 1){
+      console.log(pay)
       if( pay !== parseInt(salaryNotAssigned())){
         return setErrorMessage('It is necessary to allocate the remaining total .') }
     } 
     if(!maxTwoAccountSelectedForPayConditional())return null
+    
     let newUserData = {...userData, depositAccounts:[...userData.depositAccounts, initialSelectedNewPaymentValue]}
     setUserData(newUserData)
     localSet(tagUserData, newUserData)
