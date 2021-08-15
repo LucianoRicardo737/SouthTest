@@ -6,14 +6,14 @@ const PaymeHere = () => {
   const {userData} = useAppContext()
   const {
     salaryNotAssigned,  
-    closeAllComponents, 
+    fadeOut, 
     sumbitSelectNewPaymentAccount, 
     handlerSelectedPaymentAccount
   }=useAccountContext()
 
 
   return (
-    <div className='ui doubling stackable left '>
+    <div id='payhereComponent' className='ui doubling stackable left transition animating in fade down'>
       <div className="ui mini form ">
         <div className="three fields">
           <div className="field">
@@ -35,7 +35,7 @@ const PaymeHere = () => {
       </div>
       <div className='container'>
         <button onClick={()=>sumbitSelectNewPaymentAccount()} className="ui right  button">Submit</button>
-        <button onClick={()=>closeAllComponents()} className="ui right  button">Close</button>
+        <button onClick={()=>fadeOut('payhereComponent')} className="ui right  button">Close</button>
       </div>
     </div>
   )

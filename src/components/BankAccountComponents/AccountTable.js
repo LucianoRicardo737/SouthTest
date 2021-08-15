@@ -5,13 +5,13 @@ import {localSet, getInLocalTheLocalAccounts} from '../../context/functions/loca
 import DetailsAccount from './DetailsAccount'
 import PaymeHere from './PaymeHere'
 const AccountTable = () => {
-  const localStyle = {
+  const accountTable_style = {
     account: {
       cursor: 'pointer',
       color: '#0e76a8'
     },
-    border:{
-      border: '1px solid black'
+    buttonPayHere:{
+      color: '#0e76a8'
     }
   }
   const { 
@@ -21,7 +21,7 @@ const AccountTable = () => {
   const {
     changeViewComponetns, 
     typeAccountSelected,
-    isThisAccountSelectToPay, 
+    payInThisAccount, 
     maxTwoAccountSelectedForPayConditional, 
     unselectPaymentAccount,
     viewDetailAccount,
@@ -32,7 +32,7 @@ const AccountTable = () => {
   const deleteThisAccount = (e) => {
     e.preventDefault()
     unselectPaymentAccount(e)
-    let newArrayWithoutDeletedAccount = accountsData?.filter(res=>{return res.accountNumber !== e.target.id})
+    const newArrayWithoutDeletedAccount = accountsData?.filter(res=>{return res.accountNumber !== e.target.id})
     localSet('accountsData', newArrayWithoutDeletedAccount)
     setAccountsData(getInLocalTheLocalAccounts())
   }
@@ -55,12 +55,12 @@ const AccountTable = () => {
                     // data-tooltip="View Details" 
                     // data-position="right center" 
                     className='hover' 
-                    style={localStyle.account} 
+                    style={accountTable_style.account} 
                     id={res.accountNumber} onClick={(e) => { changeViewComponetns('viewDetailsForThisAccountComponent', e) }}>{res.bankName}</td>
                   <td>{res.accountNumber}</td>
                   <td>
                     <div className="content">
-                      {isThisAccountSelectToPay(res.accountNumber) ?
+                      {!payInThisAccount(res.accountNumber) ?
                         <button  
                           id={res.accountNumber} 
                           onClick={(e)=>changeViewComponetns( 'viewPaymentHereComponent',e)} 
@@ -86,13 +86,13 @@ const AccountTable = () => {
                 {viewDetailAccount && 
                  accountNumberState === res.accountNumber ? 
                   <tr>
-                    <td colSpan="3" className='transition animating in fade down'><DetailsAccount /></td>
+                    <td colSpan="3" ><DetailsAccount /></td>
                   </tr> : null 
                 }
                 {viewPaymeHere &&
                  accountNumberState === res.accountNumber ? 
                   <tr>
-                    <td colSpan="3" className='transition animating in fade down'><PaymeHere /></td>
+                    <td  colSpan="3" className=''><PaymeHere /></td>
                   </tr> : null }
               </tbody>
             )

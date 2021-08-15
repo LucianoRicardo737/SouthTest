@@ -14,14 +14,17 @@ const AddNewAccount = () => {
     setDataFormForNewAccount,
     setErrorMessage,
     closeAllComponents,
-    accountalreadyDeclared
+    accountalreadyDeclared,
+    fadeOut,
+    setSuccessMessage
   } = useAccountContext()
 
-  const addAccountStyle = {
+  const addAccount_style = {
     cont:{
       border: '1px solid rgb(237,237,238)',
       padding: '20px',
-      borderRadius: '5px'
+      borderRadius: '5px',
+      transition: '1s'
     },
     buttonGroup:{
       marginRight: '0px',
@@ -29,6 +32,9 @@ const AddNewAccount = () => {
       justifyItems: 'center !important',
       alignItems: 'right !important',
       margin: 'auto'
+    },
+    submit:{
+      color: '#0e76a8'
     }
   }
   
@@ -119,10 +125,19 @@ const AddNewAccount = () => {
     let newObject = [...data,dataFormForNewAccount]
     localSet('accountsData', newObject)
     setAccountsData(getInLocalTheLocalAccounts())
+
+    setSuccessMessage('Account Created.')
+    
+    fadeOut('addNewAccountComponent')
+    setTimeout(() => {
+      closeAllComponents()
+    },140)
   }
   
+
+  
   return (
-    <div style={addAccountStyle.cont} className='ui doubling stackable  transition animating in fade down'>
+    <div id='addNewAccountComponent' style={addAccount_style.cont} className='ui doubling stackable transition animating in fade down'>
       <form className="ui mini form" onSubmit={(e)=>submitNewAccountForm(e)}>
         <div className="three fields">
           {returnBankName }
@@ -137,8 +152,8 @@ const AddNewAccount = () => {
           {returnPersonalAddress}
         </div>
        
-        <button type='submit' className="ui button">Submit</button>
-        <span onClick={()=>closeAllComponents()} className="ui button">Close</span>
+        <button type='submit' style={addAccount_style.submit} className="ui button">Submit</button>
+        <span onClick={()=>{fadeOut('addNewAccountComponent')}} className="ui button">Close</span>
        
       </form>
     </div>

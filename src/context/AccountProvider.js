@@ -30,15 +30,20 @@ const AccountProvider = ({ children }) => {
   const [dataFormForNewAccount, setDataFormForNewAccount] = useState(initialDataAccoutn)
   // view erros
   const [errorMessage, setErrorMessage]=useState('')
+  const [successMessage, setSuccessMessage] = useState('')
   // select mount to pay in one account
   const [dataSelectedNewPayment, setDataSelectedNewPayment] = useState(0)
 
+  function clearMessages (){
+    setErrorMessage('')
+    setSuccessMessage('')
+  }
   // this effect is necessary to maintain actualize initial account when the type cambia 
   useEffect(()=>{
     try {
       setDataFormForNewAccount(initialDataAccoutn)
     } catch (error) {
-      console.log(error)
+      console.error
     }
   },[typeAccountSelected])
 
@@ -58,10 +63,14 @@ const AccountProvider = ({ children }) => {
   
   // close all components
   function closeAllComponents(){
+
+    
+
     setViewNewAccountOrDetailAccount(false)
     setViewPaymeHere(false)
     setViewDetailAccount(false)
     setErrorMessage('')
+    setDataSelectedNewPayment(0)
   }
   function filterAccoutByAccountNumber(value){
     const accData = accountsData?.filter(res => { 
@@ -112,17 +121,15 @@ const AccountProvider = ({ children }) => {
 
   // limit selected accounts 
   function maxTwoAccountSelectedForPayConditional(){
-    if(salaryNotAssigned()===0) {return false} 
+    if(salaryNotAssigned()===0) return false
     else if(userData.depositAccounts.length < 2) return true 
   }
   // conditional
-  function isThisAccountSelectToPay(value){
-    const totalyAssignedToThisAccount = userData.depositAccounts?.filter(res=>{
-      return res.accountNumber === value
-    }).map(res=>{return res.pay})
-    if(totalyAssignedToThisAccount[0]) return false
-    else return true
+  function payInThisAccount(value){
+    const totalyAssignedToThisAccount = userData.depositAccounts?.filter(res=>{return res.accountNumber === value})
+    return totalyAssignedToThisAccount[0]
   }
+
   // conditional
   function accountalreadyDeclared(value){
     const totalyAssignedToThisAccount = accountsData?.filter(res=>{
@@ -131,7 +138,7 @@ const AccountProvider = ({ children }) => {
     return totalyAssignedToThisAccount.length
   }
 
-
+  // delete account 
   function unselectPaymentAccount(e){
     let data = userData.depositAccounts?.filter(res=>{
       return res.accountNumber !== e.target.id
@@ -140,11 +147,13 @@ const AccountProvider = ({ children }) => {
     setUserData(newUserData)
     localSet(tagUserData, newUserData)
   }
-
+  // select how much pay
   const handlerSelectedPaymentAccount = (e) => {
     setDataSelectedNewPayment(e.target.value)
   }
 
+
+  // set pay 
   function sumbitSelectNewPaymentAccount(){
     const initialSelectedNewPaymentValue = {
       accountNumber: accountNumberState,
@@ -161,10 +170,26 @@ const AccountProvider = ({ children }) => {
     } 
     if(!maxTwoAccountSelectedForPayConditional())return null
     
+    setSuccessMessage('Account selected for receiving pay.')
+    
+    fadeOut('payhereComponent')
+
     let newUserData = {...userData, depositAccounts:[...userData.depositAccounts, initialSelectedNewPaymentValue]}
     setUserData(newUserData)
     localSet(tagUserData, newUserData)
-    setViewPaymeHere(false)
+    setTimeout(() => {
+      closeAllComponents()
+    },160)
+  }
+
+  function fadeOut(id){
+    const selector = document.querySelector(`#${id}`).classList
+    selector.remove('fade', 'in',  'down')
+    selector.add('fade', 'out',  'down')
+
+    setTimeout(() => {
+      closeAllComponents()
+    },160)
   }
 
   return (
@@ -174,12 +199,11 @@ const AccountProvider = ({ children }) => {
         viewDetailAccount, 
         viewPaymeHere,
         errorMessage, 
-        setErrorMessage,
+        clearMessages,
         salaryNotAssigned,
         closeAllComponents,
         sumbitSelectNewPaymentAccount,
         handlerSelectedPaymentAccount,
-        isThisAccountSelectToPay,
         typeAccountSelected, 
         dataFormForNewAccount,
         setDataFormForNewAccount,
@@ -187,7 +211,12 @@ const AccountProvider = ({ children }) => {
         accountalreadyDeclared,
         changeViewComponetns,
         maxTwoAccountSelectedForPayConditional,
-        accountNumberState
+        accountNumberState,
+        payInThisAccount,
+        fadeOut,
+        successMessage,
+        setSuccessMessage,
+        setErrorMessage
       }}
     > 
       {children}

@@ -7,7 +7,7 @@ import React from 'react'
 import './app.css'
 import { AccountProvider } from './context/AccountProvider'
 
-const appStyle = {
+const app_style = {
   nav: {
     height: '60px',
     gridColumn: '1/ span 16 ',
@@ -20,7 +20,7 @@ function App () {
   return (
     <div className='App ui grid padded'>
       <AppProvider>
-        <div style={appStyle.nav} className='sixteen wide column'>
+        <div style={app_style.nav} className='sixteen wide column'>
           <Navegation />
         </div>
         <div className='four wide column'>

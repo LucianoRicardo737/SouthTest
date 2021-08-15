@@ -3,8 +3,8 @@ import { useAccountContext } from '../../context/AccountProvider'
 const DetailsAccount = () => { 
   const {
     dataFormForNewAccount, 
-    closeAllComponents, 
-    isThisAccountSelectToPay
+    fadeOut, 
+    payInThisAccount
   } = useAccountContext()
 
   const {
@@ -18,22 +18,27 @@ const DetailsAccount = () => {
     // type
   } = dataFormForNewAccount
 
-  const detailsAccountStyle = {
-    // cont:{
-    //   border: '1px solid rgb(237,237,238)',
-    //   padding: '20px',
-    //   borderRadius: '5px'
-    // },
+  const detailsAccount_style = {
     labelSpan:{
       fontWeight: 'bold',
       marginRight: '4px'
+    },
+    border:{
+      marginBottom: '12px' 
+    },
+    subtitle:{
+      fontWeight: 'bolder',
+      fontSize: '15px'
+    },
+    pay:{
+      marginLeft: '10px'
     }
   }
 
   const useField = ({label,data}) => {
     return (
       <div className='field'>
-        <p className='' style={{wordWrap:'break-word'}}><span style={detailsAccountStyle.labelSpan}>{label}</span><span>{data}</span></p>
+        <p className='' style={{wordWrap:'break-word'}}><span style={detailsAccount_style.labelSpan}>{label}</span><span>{data}</span></p>
       </div>
     )
   }
@@ -62,8 +67,16 @@ const DetailsAccount = () => {
 
 
   return (
-    <div className='ui doubling stackable left '>
-      <h3>Account Information {!isThisAccountSelectToPay(accountNumber) && <i className="dollar sign icon"></i> }</h3>
+    <div id='detailsAccountComponent' className='ui doubling stackable left transition animating fade in  down'>
+      
+      <div style={detailsAccount_style.border}>
+        <span style={detailsAccount_style.subtitle} className=''>
+          Account Information
+        </span> 
+        { payInThisAccount(accountNumber) && <>
+          <span style={detailsAccount_style.pay} className=''>${payInThisAccount(accountNumber).pay}</span>
+        </> }
+      </div>
       <div className='ui mini form'>
         <div className="three fields">
           {returnBankName}
@@ -82,7 +95,7 @@ const DetailsAccount = () => {
           </div>
         </div>
       </div>
-      <button onClick={()=>closeAllComponents()} className="ui button">Close</button>
+      <button onClick={()=>fadeOut('detailsAccountComponent')} className="ui button">Close</button>
     </div>
   )
 }
