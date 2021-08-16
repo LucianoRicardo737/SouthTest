@@ -99,6 +99,7 @@ const AccountProvider = ({ children }) => {
     const localSelector = document.querySelector(`.${localString}`)
     const internationalSelector = document.querySelector(`.${internationalString}`)
     closeAllComponents()
+    clearMessages()
 
     switch (value) {
     case VIEW_ACCOUNT_COMPONET:
@@ -166,12 +167,14 @@ const AccountProvider = ({ children }) => {
     selector.add('fade', 'out',  'down')
 
     setTimeout(() => {
+      clearMessages()
       closeAllComponents()
     },160)
   }
 
   // set pay 
-  const sumbitSelectNewPaymentAccount = () => {
+  const submitNewPayment = () => {
+    
     const initialSelectedNewPaymentValue = {
       accountNumber: accountNumberState,
       typeAccount: typeAccountSelected,
@@ -186,24 +189,24 @@ const AccountProvider = ({ children }) => {
     } 
     if(!maxTwoAccountSelectedForPayConditional())return null
     
-    setSuccessMessage(accountSelectForPay_message)
 
     let newUserData = {...userData, depositAccounts:[...userData.depositAccounts, initialSelectedNewPaymentValue]}
     // render dom
     setUserData(newUserData)
     localSet(tagUserData, newUserData)
-
     fadeOut('payhereComponent')
     setTimeout(() => {
       closeAllComponents()
+      setSuccessMessage(accountSelectForPay_message)
     },160)
+    
+
   }
 
 
   // create new account
   const submitNewAccountForm = (e) => {
     e.preventDefault()
-
     let {
       bankName,
       bankAddress,
@@ -230,11 +233,12 @@ const AccountProvider = ({ children }) => {
     let newObject = [...data,dataFormForNewAccount]
     localSet(tagAccountData, newObject)
     setAccountsData(newObject)
-    setSuccessMessage(accountCreated_message)
+
     
     fadeOut('addNewAccountComponent')
     setTimeout(() => {
       closeAllComponents()
+      setSuccessMessage(accountCreated_message)
     },140)
   }
   
@@ -246,6 +250,10 @@ const AccountProvider = ({ children }) => {
     let newUserData = {...userData, depositAccounts:data}
     setUserData(newUserData)
     localSet(tagUserData, newUserData)
+    setTimeout(() => {
+      clearMessages('')
+      setSuccessMessage('unselected account')
+    },140)
   }
 
   return (
@@ -257,7 +265,7 @@ const AccountProvider = ({ children }) => {
         errorMessage, 
         clearMessages,
         salaryNotAssigned,
-        sumbitSelectNewPaymentAccount,
+        submitNewPayment,
         handlerSelectedPaymentAccount,
         typeAccountSelected, 
         dataFormForNewAccount,

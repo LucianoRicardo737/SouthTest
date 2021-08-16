@@ -7,7 +7,7 @@ const PaymeHere = () => {
   const {
     salaryNotAssigned,  
     fadeOut, 
-    sumbitSelectNewPaymentAccount, 
+    submitNewPayment, 
     handlerSelectedPaymentAccount
   }=useAccountContext()
 
@@ -34,7 +34,7 @@ const PaymeHere = () => {
         </div>
       </div>
       <div className='container'>
-        <button onClick={()=>sumbitSelectNewPaymentAccount()} className="ui right  button">Submit</button>
+        <button onClick={()=>submitNewPayment()} className="ui right  button">Submit</button>
         <button onClick={()=>fadeOut('payhereComponent')} className="ui right  button">Close</button>
       </div>
     </div>
