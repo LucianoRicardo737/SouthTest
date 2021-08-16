@@ -1,8 +1,27 @@
 import React, {useContext, useState, useEffect} from 'react'
 import { VIEW_ACCOUNT_COMPONET, VIEW_NEW_ACCOUNT_COMPONET, VIEW_PAYMENT_HERE_COMPONET, VIEW_SELEC_TYPE_ACCOUNT_COMPONET } from './actions/actionTypes'
 import { useAppContext } from './AppProvider'
-import { internationalString, localString, tagUserData } from './env/determinants'
-import { localSet } from './functions/localStorage'
+import { internationalString, localString, tagAccountData, tagUserData } from './env/env'
+import { 
+  accountCreated_message,
+  accountNumberIsAlreadyDeclared_message,
+  accountNumberIsNecessary_message, 
+  accountSelectForPay_message, 
+  addressBankIsNecessary_message, 
+  limitToAssign_message,
+  minimumToAssign300_message, 
+  nameBankIsNecessary_message, 
+  selectTotalRemaning_message, 
+  swiftNumberIsNecessary_message, 
+  typeCoinIsNecessary_message, 
+  yourAddressIsNecessary_message 
+} from './env/globalMessagesText'
+
+import { 
+  getInLocalTheLocalAccounts, 
+  localSet 
+} from './functions/localStorage'
+
 const AccountContext = React.createContext()
 
 const useAccountContext = () => { 
@@ -14,7 +33,8 @@ const AccountProvider = ({ children }) => {
   let {
     userData, 
     accountsData, 
-    setUserData
+    setUserData,
+    setAccountsData
   } = useAppContext()
 
   //  local or international
@@ -60,16 +80,11 @@ const AccountProvider = ({ children }) => {
     }
     return data
   }
-  
   // close all components
   function closeAllComponents(){
-
-    
-
     setViewNewAccountOrDetailAccount(false)
     setViewPaymeHere(false)
     setViewDetailAccount(false)
-    setErrorMessage('')
     setDataSelectedNewPayment(0)
   }
   function filterAccoutByAccountNumber(value){
@@ -81,8 +96,8 @@ const AccountProvider = ({ children }) => {
   // switch views between components 
   function changeViewComponetns(value, e){
 
-    const localSelector = document.querySelector('.local')
-    const internationalSelector = document.querySelector('.international')
+    const localSelector = document.querySelector(`.${localString}`)
+    const internationalSelector = document.querySelector(`.${internationalString}`)
     closeAllComponents()
 
     switch (value) {
@@ -132,56 +147,19 @@ const AccountProvider = ({ children }) => {
 
   // conditional
   function accountalreadyDeclared(value){
-    const totalyAssignedToThisAccount = accountsData?.filter(res=>{
+    const account = accountsData?.filter(res=>{
       return res.accountNumber === value
     })
-    return totalyAssignedToThisAccount.length
+    return account.length
   }
 
-  // delete account 
-  function unselectPaymentAccount(e){
-    let data = userData.depositAccounts?.filter(res=>{
-      return res.accountNumber !== e.target.id
-    })
-    let newUserData = {...userData, depositAccounts:data}
-    setUserData(newUserData)
-    localSet(tagUserData, newUserData)
-  }
+
   // select how much pay
   const handlerSelectedPaymentAccount = (e) => {
     setDataSelectedNewPayment(e.target.value)
   }
 
-
-  // set pay 
-  function sumbitSelectNewPaymentAccount(){
-    const initialSelectedNewPaymentValue = {
-      accountNumber: accountNumberState,
-      typeAccount: typeAccountSelected,
-      pay: dataSelectedNewPayment
-    }
-    const pay = parseInt(initialSelectedNewPaymentValue.pay)
-    if(pay < 299 ) return setErrorMessage('The minimum to assign is 300.')
-    if( pay > parseInt(salaryNotAssigned())) return setErrorMessage('You cannot assign more than the total.')
-    if(userData.depositAccounts.length === 1){
-      console.log(pay)
-      if( pay !== parseInt(salaryNotAssigned())){
-        return setErrorMessage('It is necessary to allocate the remaining total .') }
-    } 
-    if(!maxTwoAccountSelectedForPayConditional())return null
-    
-    setSuccessMessage('Account selected for receiving pay.')
-    
-    fadeOut('payhereComponent')
-
-    let newUserData = {...userData, depositAccounts:[...userData.depositAccounts, initialSelectedNewPaymentValue]}
-    setUserData(newUserData)
-    localSet(tagUserData, newUserData)
-    setTimeout(() => {
-      closeAllComponents()
-    },160)
-  }
-
+  // effect for  components closed 
   function fadeOut(id){
     const selector = document.querySelector(`#${id}`).classList
     selector.remove('fade', 'in',  'down')
@@ -190,6 +168,84 @@ const AccountProvider = ({ children }) => {
     setTimeout(() => {
       closeAllComponents()
     },160)
+  }
+
+  // set pay 
+  const sumbitSelectNewPaymentAccount = () => {
+    const initialSelectedNewPaymentValue = {
+      accountNumber: accountNumberState,
+      typeAccount: typeAccountSelected,
+      pay: dataSelectedNewPayment
+    }
+    const pay = parseInt(initialSelectedNewPaymentValue.pay)
+    if(pay < 299 ) return setErrorMessage(minimumToAssign300_message)
+    if( pay > parseInt(salaryNotAssigned())) return setErrorMessage(limitToAssign_message)
+    if(userData.depositAccounts.length === 1){
+      if( pay !== parseInt(salaryNotAssigned())){
+        return setErrorMessage(selectTotalRemaning_message) }
+    } 
+    if(!maxTwoAccountSelectedForPayConditional())return null
+    
+    setSuccessMessage(accountSelectForPay_message)
+
+    let newUserData = {...userData, depositAccounts:[...userData.depositAccounts, initialSelectedNewPaymentValue]}
+    // render dom
+    setUserData(newUserData)
+    localSet(tagUserData, newUserData)
+
+    fadeOut('payhereComponent')
+    setTimeout(() => {
+      closeAllComponents()
+    },160)
+  }
+
+
+  // create new account
+  const submitNewAccountForm = (e) => {
+    e.preventDefault()
+
+    let {
+      bankName,
+      bankAddress,
+      accountNumber,
+      typeCoin,
+      swiftNumber,
+      beneficiaryAddress,
+      type:typeAccountSelected
+    } = dataFormForNewAccount
+
+    if(!bankName) return setErrorMessage(nameBankIsNecessary_message)
+    if(!bankAddress) return setErrorMessage(addressBankIsNecessary_message)
+    if(!accountNumber) return setErrorMessage(accountNumberIsNecessary_message)
+    if(accountalreadyDeclared(accountNumber)===1)return setErrorMessage(accountNumberIsAlreadyDeclared_message)
+    
+    if(!beneficiaryAddress) return setErrorMessage(yourAddressIsNecessary_message)
+
+    if(typeAccountSelected===internationalString){
+      if(!typeCoin) return setErrorMessage(typeCoinIsNecessary_message)
+      if(!swiftNumber) return setErrorMessage(swiftNumberIsNecessary_message)
+    }
+
+    let data = getInLocalTheLocalAccounts()
+    let newObject = [...data,dataFormForNewAccount]
+    localSet(tagAccountData, newObject)
+    setAccountsData(newObject)
+    setSuccessMessage(accountCreated_message)
+    
+    fadeOut('addNewAccountComponent')
+    setTimeout(() => {
+      closeAllComponents()
+    },140)
+  }
+  
+  // delete account 
+  const unselectPaymentAccount = (e) => {
+    let data = userData.depositAccounts?.filter(res=>{
+      return res.accountNumber !== e.target.id
+    })
+    let newUserData = {...userData, depositAccounts:data}
+    setUserData(newUserData)
+    localSet(tagUserData, newUserData)
   }
 
   return (
@@ -201,22 +257,19 @@ const AccountProvider = ({ children }) => {
         errorMessage, 
         clearMessages,
         salaryNotAssigned,
-        closeAllComponents,
         sumbitSelectNewPaymentAccount,
         handlerSelectedPaymentAccount,
         typeAccountSelected, 
         dataFormForNewAccount,
         setDataFormForNewAccount,
         unselectPaymentAccount,
-        accountalreadyDeclared,
         changeViewComponetns,
         maxTwoAccountSelectedForPayConditional,
         accountNumberState,
         payInThisAccount,
         fadeOut,
         successMessage,
-        setSuccessMessage,
-        setErrorMessage
+        submitNewAccountForm
       }}
     > 
       {children}

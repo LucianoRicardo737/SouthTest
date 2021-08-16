@@ -4,6 +4,8 @@ import { useAccountContext } from '../../context/AccountProvider'
 import {localSet, getInLocalTheLocalAccounts} from '../../context/functions/localStorage'
 import DetailsAccount from './DetailsAccount'
 import PaymeHere from './PaymeHere'
+import { VIEW_ACCOUNT_COMPONET, VIEW_PAYMENT_HERE_COMPONET } from '../../context/actions/actionTypes'
+import { tagAccountData } from '../../context/env/env'
 const AccountTable = () => {
   const accountTable_style = {
     account: {
@@ -33,7 +35,7 @@ const AccountTable = () => {
     e.preventDefault()
     unselectPaymentAccount(e)
     const newArrayWithoutDeletedAccount = accountsData?.filter(res=>{return res.accountNumber !== e.target.id})
-    localSet('accountsData', newArrayWithoutDeletedAccount)
+    localSet(tagAccountData, newArrayWithoutDeletedAccount)
     setAccountsData(getInLocalTheLocalAccounts())
   }
   return (
@@ -56,14 +58,14 @@ const AccountTable = () => {
                     // data-position="right center" 
                     className='hover' 
                     style={accountTable_style.account} 
-                    id={res.accountNumber} onClick={(e) => { changeViewComponetns('viewDetailsForThisAccountComponent', e) }}>{res.bankName}</td>
+                    id={res.accountNumber} onClick={(e) => { changeViewComponetns(VIEW_ACCOUNT_COMPONET, e) }}>{res.bankName}</td>
                   <td>{res.accountNumber}</td>
                   <td>
                     <div className="content">
                       {!payInThisAccount(res.accountNumber) ?
                         <button  
                           id={res.accountNumber} 
-                          onClick={(e)=>changeViewComponetns( 'viewPaymentHereComponent',e)} 
+                          onClick={(e)=>changeViewComponetns( VIEW_PAYMENT_HERE_COMPONET,e)} 
                           className={maxTwoAccountSelectedForPayConditional() === true ? 'ui mini left attached linkedin button' : 'ui mini left attached linkedin button disabled'}>{maxTwoAccountSelectedForPayConditional() === true ? 'Payment Here': 'All Selected'}
                         </button>
                         :

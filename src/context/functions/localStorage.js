@@ -1,5 +1,5 @@
 import { initialUserData } from '../../db/initialData_db'
-import { tagAccountData, tagUserData } from '../env/determinants'
+import { tagAccountData, tagUserData } from '../env/env'
 
 
 // functions for set and get data in localstorage
