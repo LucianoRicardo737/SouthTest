@@ -1,11 +1,9 @@
 import { useAppContext } from '../../context/AppProvider'
 import React from 'react'
 import { useAccountContext } from '../../context/AccountProvider'
-import {localSet, getInLocalTheLocalAccounts} from '../../context/functions/localStorage'
 import DetailsAccount from './DetailsAccount'
 import PaymeHere from './PaymeHere'
 import { VIEW_ACCOUNT_COMPONET, VIEW_PAYMENT_HERE_COMPONET } from '../../context/actions/actionTypes'
-import { tagAccountData } from '../../context/env/env'
 const AccountTable = () => {
   const accountTable_style = {
     account: {
@@ -17,8 +15,7 @@ const AccountTable = () => {
     }
   }
   const { 
-    accountsData,  
-    setAccountsData 
+    accountsData
   } = useAppContext()
   const {
     changeViewComponetns, 
@@ -28,16 +25,11 @@ const AccountTable = () => {
     unselectPaymentAccount,
     viewDetailAccount,
     viewPaymeHere,
-    accountNumberState
+    accountNumberState,
+    deleteThisAccount
   } = useAccountContext()
 
-  const deleteThisAccount = (e) => {
-    e.preventDefault()
-    unselectPaymentAccount(e)
-    const newArrayWithoutDeletedAccount = accountsData?.filter(res=>{return res.accountNumber !== e.target.id})
-    localSet(tagAccountData, newArrayWithoutDeletedAccount)
-    setAccountsData(getInLocalTheLocalAccounts())
-  }
+
   return (
     <div>
       <table className='ui small tree column table selectable '>

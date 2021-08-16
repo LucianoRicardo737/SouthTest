@@ -4,6 +4,7 @@ import { useAppContext } from './AppProvider'
 import { internationalString, localString, tagAccountData, tagUserData } from './env/env'
 import { 
   accountCreated_message,
+  accountDeleted_message,
   accountNumberIsAlreadyDeclared_message,
   accountNumberIsNecessary_message, 
   accountSelectForPay_message, 
@@ -165,9 +166,8 @@ const AccountProvider = ({ children }) => {
     const selector = document.querySelector(`#${id}`).classList
     selector.remove('fade', 'in',  'down')
     selector.add('fade', 'out',  'down')
-
+    id && clearMessages('')
     setTimeout(() => {
-      clearMessages()
       closeAllComponents()
     },160)
   }
@@ -203,9 +203,23 @@ const AccountProvider = ({ children }) => {
 
   }
 
+  // delete account 
+  const unselectPaymentAccount = (e) => {
+    let data = userData.depositAccounts?.filter(res=>{
+      return res.accountNumber !== e.target.id
+    })
+    let newUserData = {...userData, depositAccounts:data}
+    setUserData(newUserData)
+    localSet(tagUserData, newUserData)
+    setTimeout(() => {
+      clearMessages('')
+      setSuccessMessage('unselected account')
+    },140)
+  }
+
 
   // create new account
-  const submitNewAccountForm = (e) => {
+  const submitNewAccount = (e) => {
     e.preventDefault()
     let {
       bankName,
@@ -234,27 +248,28 @@ const AccountProvider = ({ children }) => {
     localSet(tagAccountData, newObject)
     setAccountsData(newObject)
 
-    
     fadeOut('addNewAccountComponent')
+    setSuccessMessage(accountCreated_message)
     setTimeout(() => {
       closeAllComponents()
-      setSuccessMessage(accountCreated_message)
+    },140)
+  }
+
+  const deleteThisAccount = (e) => {
+    e.preventDefault()
+    unselectPaymentAccount(e)
+    const newArrayWithoutDeletedAccount = accountsData?.filter(res=>{return res.accountNumber !== e.target.id})
+
+    localSet(tagAccountData, newArrayWithoutDeletedAccount)
+    setAccountsData(newArrayWithoutDeletedAccount)
+
+    setTimeout(() => {
+      closeAllComponents()
+      setSuccessMessage(accountDeleted_message)
     },140)
   }
   
-  // delete account 
-  const unselectPaymentAccount = (e) => {
-    let data = userData.depositAccounts?.filter(res=>{
-      return res.accountNumber !== e.target.id
-    })
-    let newUserData = {...userData, depositAccounts:data}
-    setUserData(newUserData)
-    localSet(tagUserData, newUserData)
-    setTimeout(() => {
-      clearMessages('')
-      setSuccessMessage('unselected account')
-    },140)
-  }
+
 
   return (
     <AccountContext.Provider
@@ -277,7 +292,8 @@ const AccountProvider = ({ children }) => {
         payInThisAccount,
         fadeOut,
         successMessage,
-        submitNewAccountForm
+        submitNewAccount,
+        deleteThisAccount
       }}
     > 
       {children}

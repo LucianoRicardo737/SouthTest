@@ -10,7 +10,7 @@ const AddNewAccount = () => {
     dataFormForNewAccount, 
     setDataFormForNewAccount,
     fadeOut,
-    submitNewAccountForm
+    submitNewAccount
   } = useAccountContext()
 
   const addAccount_style = {
@@ -92,7 +92,7 @@ const AddNewAccount = () => {
 
   return (
     <div id='addNewAccountComponent' style={addAccount_style.cont} className='ui doubling stackable transition animating in fade down'>
-      <form className="ui mini form" onSubmit={(e)=>submitNewAccountForm(e)}>
+      <form className="ui mini form" onSubmit={(e)=>submitNewAccount(e)}>
         <div className="three fields">
           {returnBankName }
           {returnBankAddress}
